@@ -7,8 +7,6 @@ AudioPlayer song;
 
 float divX, divY, divWidth, divHeight;
 float musicButtonX, musicButtonY, musicButtonWidth, musicButtonHeight;
-float playX, playY, playWidth, playHeight;
-float stopX, stopY, stopWidth, stopHeight;
 
 void setup() {
   fullScreen(); // Set to full screen
@@ -28,23 +26,11 @@ void setup() {
 
   float smallerSide = min(divWidth, divHeight);
 
-  // Music button dimensions
+  // Music button area dimensions
   musicButtonX = divX;
   musicButtonY = divY;
   musicButtonWidth = smallerSide;
   musicButtonHeight = smallerSide;
-
-  // Play button dimensions
-  playX = musicButtonX + musicButtonWidth * 0.15;
-  playY = musicButtonY + musicButtonHeight * 0.25;
-  playWidth = musicButtonWidth * 0.3;
-  playHeight = musicButtonHeight * 0.5;
-
-  // Stop button dimensions
-  stopX = musicButtonX + musicButtonWidth * 0.55;
-  stopY = musicButtonY + musicButtonHeight * 0.25;
-  stopWidth = musicButtonWidth * 0.3;
-  stopHeight = musicButtonHeight * 0.5;
 }
 
 void draw() {
@@ -54,43 +40,93 @@ void draw() {
   fill(230);
   rect(divX, divY, divWidth, divHeight);
 
-  // Draw music button area
-  fill(200);
-  rect(musicButtonX, musicButtonY, musicButtonWidth, musicButtonHeight);
+  // Calculate spacing
+  int numButtons = 11;
+  float buttonSpacing = musicButtonWidth / numButtons;
 
-  // Draw Play button
-  fill(0, 255, 0); // Green color
-  rect(playX, playY, playWidth, playHeight);
-  fill(0);
-  textAlign(CENTER, CENTER);
-  textSize(16);
-  text("Play", playX + playWidth / 2, playY + playHeight / 2);
+  // Loop to draw 11 button pairs
+  for (int i = 0; i < numButtons; i++) {
+    float xOffset = musicButtonX + i * buttonSpacing;
 
-  // Draw Stop button
-  fill(255, 0, 0); // Red color
-  rect(stopX, stopY, stopWidth, stopHeight);
-  fill(0);
-  textAlign(CENTER, CENTER);
-  textSize(16);
-  text("Stop", stopX + stopWidth / 2, stopY + stopHeight / 2);
+    // Draw button background area
+    fill(200);
+    rect(xOffset, musicButtonY, buttonSpacing, musicButtonHeight);
+
+    // Smaller play button
+    float thisPlayX = xOffset + buttonSpacing * 0.15;
+    float thisPlayY = musicButtonY + musicButtonHeight * 0.7;
+    float thisPlayW = buttonSpacing * 0.25;
+    float thisPlayH = musicButtonHeight * 0.15;
+
+    fill(0, 255, 0);
+    rect(thisPlayX, thisPlayY, thisPlayW, thisPlayH);
+    fill(0);
+    textAlign(CENTER, CENTER);
+    textSize(12);
+    text("Play", thisPlayX + thisPlayW / 2, thisPlayY + thisPlayH / 2);
+
+    // Smaller stop button
+    float thisStopX = thisPlayX + buttonSpacing * 0.35;
+    float thisStopY = thisPlayY;
+    float thisStopW = thisPlayW;
+    float thisStopH = thisPlayH;
+
+    fill(255, 0, 0);
+   float thisPauseX = thisStopX + buttonSpacing * 0.35;
+float thisPauseY = thisPlayY;
+float thisPauseW = thisPlayW;
+float thisPauseH = thisPlayH;
+
+// Insert this new code at line 77:
+fill(255, 255, 0); // Yellow background
+rect(thisPauseX, thisPauseY, thisPauseW, thisPauseH);
+
+// Draw pause icon (two bars)
+float barWidth = thisPauseW * 0.2;
+float gap = thisPauseW * 0.1;
+float barHeight = thisPauseH * 0.6;
+float barY = thisPauseY + (thisPauseH - barHeight) / 2;
+
+fill(0);
+rect(thisPauseX + thisPauseW * 0.25, barY, barWidth, barHeight);
+rect(thisPauseX + thisPauseW * 0.55, barY, barWidth, barHeight);
+
+  }
 }
 
 void mousePressed() {
-  // Check if Play button is clicked
-  if (mouseX > playX && mouseX < playX + playWidth &&
-      mouseY > playY && mouseY < playY + playHeight) {
-    if (!song.isPlaying()) {
-      song.rewind();
-      song.play();
-    }
-  }
+  int numButtons = 11;
+  float buttonSpacing = musicButtonWidth / numButtons;
 
-  // Check if Stop button is clicked
-  if (mouseX > stopX && mouseX < stopX + stopWidth &&
-      mouseY > stopY && mouseY < stopY + stopHeight) {
-    if (song.isPlaying()) {
-      song.pause();
-      song.rewind();
+  for (int i = 0; i < numButtons; i++) {
+    float xOffset = musicButtonX + i * buttonSpacing;
+
+    float thisPlayX = xOffset + buttonSpacing * 0.15;
+    float thisPlayY = musicButtonY + musicButtonHeight * 0.7;
+    float thisPlayW = buttonSpacing * 0.25;
+    float thisPlayH = musicButtonHeight * 0.15;
+
+    float thisStopX = thisPlayX + buttonSpacing * 0.35;
+    float thisStopY = thisPlayY;
+    float thisStopW = thisPlayW;
+    float thisStopH = thisPlayH;
+
+    // Check play button click
+    if (mouseX > thisPlayX && mouseX < thisPlayX + thisPlayW &&
+        mouseY > thisPlayY && mouseY < thisPlayY + thisPlayH) {
+      if (!song.isPlaying()) {
+        song.rewind();
+        song.play();
+      }
+    }
+
+    // Check stop button click
+    if (mouseX > thisStopX && mouseX < thisStopX + thisStopW &&
+        mouseY > thisStopY && mouseY < thisStopY + thisStopH) {
+      if (song.isPlaying()) {
+        song.pause();
+        song.rewind();
+      }
     }
   }
 }
